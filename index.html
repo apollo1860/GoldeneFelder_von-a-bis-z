@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -36,12 +35,26 @@
     margin: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
   }
   .letter:active {
     background-color: #000000;
   }
   .letter-row {
     margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .letter-row:last-child {
+    justify-content: center;
+    width: 100%;
+  }
+  .letter-row:last-child .letter {
+    margin: 5px 20px;
   }
   #click-counter {
     font-weight: bold;
@@ -203,25 +216,30 @@ function assignGoldFields() {
     }
 
     const index = Math.floor(Math.random() * categories.length);
-const category = categories.splice(index, 1)[0];
+    const category = categories.splice(index, 1)[0];
     document.getElementById("circle").innerHTML = category;
 
     const categoriesElement = document.getElementById("categories");
     categoriesElement.innerHTML = "";
 
-    const letterRow1 = document.createElement("div");
-    letterRow1.classList.add("letter-row");
-    const letterRow2 = document.createElement("div");
-    letterRow2.classList.add("letter-row");
+    // Create five rows for the letters
+    const row1 = document.createElement("div"); // A to F
+    const row2 = document.createElement("div"); // G to L
+    const row3 = document.createElement("div"); // M to R
+    const row4 = document.createElement("div"); // S to X
+    const row5 = document.createElement("div"); // Y and Z
+
+    [row1, row2, row3, row4, row5].forEach(row => row.classList.add("letter-row"));
 
     const goldFields = assignGoldFields(); // Goldene Felder zuweisen
 
-    alphabet.forEach((letter, i) => {
+    // Helper function to create letter element
+    function createLetterElement(letter, index) {
         const letterElement = document.createElement("div");
         letterElement.textContent = letter;
         letterElement.classList.add("letter");
 
-        if (goldFields[i]) {
+        if (goldFields[index]) {
             letterElement.dataset.points = 3; // Goldene Felder: 3 Punkte
             letterElement.style.backgroundColor = "#d8bd52"; // Goldene Farbe
         } else {
@@ -231,16 +249,32 @@ const category = categories.splice(index, 1)[0];
         letterElement.onclick = function () {
             clickLetter(this);
         };
+        return letterElement;
+    }
 
-        if (i < 13) {
-            letterRow1.appendChild(letterElement);
-        } else {
-            letterRow2.appendChild(letterElement);
+    // Add letters to their respective rows
+    alphabet.forEach((letter, index) => {
+        const letterElement = createLetterElement(letter, index);
+        if (index < 6) { // A to F
+            row1.appendChild(letterElement);
+        } else if (index < 12) { // G to L
+            row2.appendChild(letterElement);
+        } else if (index < 18) { // M to R
+            row3.appendChild(letterElement);
+        } else if (index < 24) { // S to X
+            row4.appendChild(letterElement);
+        } else { // Y and Z
+            row5.appendChild(letterElement);
         }
     });
 
-    categoriesElement.appendChild(letterRow1);
-    categoriesElement.appendChild(letterRow2);
+    // Add all rows to the categories element
+    categoriesElement.appendChild(row1);
+    categoriesElement.appendChild(row2);
+    categoriesElement.appendChild(row3);
+    categoriesElement.appendChild(row4);
+    categoriesElement.appendChild(row5);
+
     startTimers();
 }
 
